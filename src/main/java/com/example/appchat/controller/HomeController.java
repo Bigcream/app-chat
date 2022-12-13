@@ -1,6 +1,6 @@
 package com.example.appchat.controller;
 
-import com.example.appchat.entity.Image;
+import com.example.appchat.model.entity.Image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
