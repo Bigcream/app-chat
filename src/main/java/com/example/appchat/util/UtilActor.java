@@ -1,4 +1,4 @@
-package com.example.appchat.utility;
+package com.example.appchat.util;
 
 import akka.actor.*;
 import akka.pattern.AskableActorSelection;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static com.example.appchat.actor.common.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
 
-public class UtilityActor {
+public class UtilActor {
 
     public static ActorRef getInstanceOfActor(String name, ActorSystem actorSystem, String actorName) throws Exception {
         ActorRef instanceOfActor;

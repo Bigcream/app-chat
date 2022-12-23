@@ -9,5 +9,5 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class ChatMessage {
-    private Message message;
+    private MessageKafka message;
 }

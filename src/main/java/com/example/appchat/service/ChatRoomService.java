@@ -4,10 +4,10 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.example.appchat.actor.chatroom.ChatRoom;
 import com.example.appchat.constant.ActorName;
-import com.example.appchat.model.dto.Message;
+import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.entity.ChatRoomEntity;
 import com.example.appchat.model.entity.UserEntity;
-import com.example.appchat.utility.UtilityActor;
+import com.example.appchat.util.UtilActor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +18,13 @@ import java.util.*;
 public class ChatRoomService {
     private final ActorSystem actorSystem;
     private final HashMap<Long, List<ChatRoomEntity>> chatRoomMap;
-    public String createRoom(Message message) throws Exception {
+    public String createRoom(MessageKafka message) throws Exception {
         message.setRoomId(genChatRoomId(message.getSenderName()));
-        ActorRef chatRoomActor = UtilityActor.getInstanceOfActor(message.getRoomId().toString(), actorSystem, ActorName.CHAT_ROOM_ACTOR);
+        ActorRef chatRoomActor = UtilActor.getInstanceOfActor(message.getRoomId().toString(), actorSystem, ActorName.CHAT_ROOM_ACTOR);
 //        chatRoomActor.tell(new ChatRoom.CreateRoom(), chatRoomActor);
         System.out.println("create chat room " + chatRoomActor.path());
         System.out.println("RoomId: " + message.getRoomId());
-        return UtilityActor.ask(chatRoomActor, new ChatRoom.CreateRoom(message), String.class);
+        return UtilActor.ask(chatRoomActor, new ChatRoom.CreateRoom(message), String.class);
     }
     private Long genChatRoomId(String username){
         Random rnd = new Random();

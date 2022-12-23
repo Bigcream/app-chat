@@ -1,18 +1,18 @@
 package com.example.appchat.actor.chatroom;
 
 
-import com.example.appchat.model.dto.Message;
+import com.example.appchat.model.dto.MessageKafka;
 
 public class ChatRoom {
     public static final class CreateRoom {
-        public final Message message;
-        public CreateRoom(Message message) {
+        public final MessageKafka message;
+        public CreateRoom(MessageKafka message) {
             this.message = message;
         }
     }
     public static final class SendPrivateChat {
-        public final Message message;
-        public SendPrivateChat(Message message) {
+        public final MessageKafka message;
+        public SendPrivateChat(MessageKafka message) {
             this.message = message;
         }
     }

@@ -16,7 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity  implements Serializable {
-    private static final long serialVersionUID = -6500665823330706018L;
 
     @Id
 //    @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq")
