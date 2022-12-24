@@ -38,7 +38,7 @@ public class ChatRoomActor extends AbstractActor {
                     sender = sender();
                     MessageKafka response = chat(msg);
                     sender.tell(response, self());
-                    redisTemplate.opsForValue().set(response.getRoomId().toString(), response);
+//                    redisTemplate.opsForValue().set(response.getRoomId().toString(), response);
                 })
                 .match(ChatRoom.CreateRoom.class, createRoom -> {
                     sender = sender();
@@ -54,7 +54,7 @@ public class ChatRoomActor extends AbstractActor {
 
     private void onCreateRoom(MessageKafka msg) {
         ChatRoomEntity chatRoom = new ChatRoomEntity();
-        chatRoom.setChatRoomId(msg.getRoomId());
+//        chatRoom.setChatRoomId(msg.getRoomId());
         chatRoomRepo.save(chatRoom);
     }
 }

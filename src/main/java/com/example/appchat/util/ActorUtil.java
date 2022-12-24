@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static com.example.appchat.actor.common.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
 
-public class UtilActor {
+public class ActorUtil {
 
     public static ActorRef getInstanceOfActor(String name, ActorSystem actorSystem, String actorName) throws Exception {
         ActorRef instanceOfActor;

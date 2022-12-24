@@ -4,18 +4,16 @@ import lombok.*;
 
 import java.sql.Timestamp;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 @Setter
-@ToString
+@Getter
 @Builder
-public class MessageKafka {
-    private Object data;
+public class MessageRoom {
+    protected Long id;
+    private Long seq;
     private String senderName;
-    private String receiverName;
     private String message;
     private Timestamp time;
-    private Status status;
     private Long room_public_id;
 }

@@ -38,8 +38,9 @@ public class PublicChatConsumer {
     }
 
     public void sendMessagePublic(ConsumerRecord<String, String> record, MessageKafka messageKafka) throws Exception {
-        UserEntity user = objectMapperUtil.convertObject(UserEntity.class, messageKafka.getData());
-        messageKafka.setSenderName(user.getUsername());
+//        UserEntity user = objectMapperUtil.convertObject(UserEntity.class, messageKafka.getData());
+//        messageKafka.setSenderName(user.getUsername());
+        System.out.println("test" + messageKafka.getMessage());
         userChatService.sendPublicChat(messageKafka);
     }
 }

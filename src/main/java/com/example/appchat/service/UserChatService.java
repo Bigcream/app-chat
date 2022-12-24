@@ -7,7 +7,7 @@ import com.example.appchat.constant.ActorName;
 import com.example.appchat.model.dto.ChatMessage;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.repository.IUserRepository;
-import com.example.appchat.util.UtilActor;
+import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +21,17 @@ public class UserChatService {
     private final ActorSystem actorSystem;
     private final HashMap<String, AtomicLong> mapId;
     public void joinRoom(MessageKafka message) throws Exception {
-        ActorRef userActor = UtilActor.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("join " + userActor.path());
     }
     public void sendPublicChat(MessageKafka message) throws Exception {
-        ActorRef userActor = UtilActor.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("test " + userActor.path());
     }
     public void sendPrivateChat(MessageKafka message) throws Exception{
-        ActorRef userActor = UtilActor.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatRoom.SendPrivateChat(message), userActor);
     }
 //    public UserEntity register(UserEntity user) throws Exception {

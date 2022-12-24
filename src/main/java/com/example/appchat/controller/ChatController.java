@@ -6,7 +6,7 @@ import com.example.appchat.model.dto.ChatRoomDTO;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.service.ChatRoomService;
 import com.example.appchat.service.UserChatService;
-import com.example.appchat.util.UtilActor;
+import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +33,10 @@ public class ChatController extends BaseController {
         userChatService.joinRoom(message);
         return message;
     }
-    @MessageMapping("/create-room")
-    public String userCreateRoom(@Payload MessageKafka message) throws Exception {
-        return chatRoomService.createRoom(message);
-    }
+//    @MessageMapping("/create-room")
+//    public String userCreateRoom(@Payload MessageKafka message) throws Exception {
+//        return chatRoomService.createRoom(message);
+//    }
 
     @MessageMapping("/private-message")
     public MessageKafka recMessage(@Payload MessageKafka message) throws Exception {
@@ -45,7 +45,7 @@ public class ChatController extends BaseController {
     }
     @GetMapping("/room-available")
     public List<ChatRoomDTO> getAllRoomAvailable(){
-        return UtilActor.askObject(actorCommon, new ChatRoom.GetAllRoomAvailable(), ChatRoomDTO.class);
+        return ActorUtil.askObject(actorCommon, new ChatRoom.GetAllRoomAvailable(), ChatRoomDTO.class);
     }
     @GetMapping("/leave-room/{roomId}")
     public ResponseEntity<Void> leaveRoom(@PathVariable Long roomId, @RequestParam String username){
@@ -53,6 +53,6 @@ public class ChatController extends BaseController {
     }
     @GetMapping("/all-user-online")
     public List<String> getAllUserOnline(){
-        return UtilActor.askObject(actorCommon, new ChatRoom.GetAllUserOnline(), String.class);
+        return ActorUtil.askObject(actorCommon, new ChatRoom.GetAllUserOnline(), String.class);
     }
 }
