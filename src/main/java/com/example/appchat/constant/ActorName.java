@@ -2,5 +2,8 @@ package com.example.appchat.constant;
 
 public class ActorName {
     public static final String USER_ACTOR = "userActor";
-    public static final String CHAT_ROOM_ACTOR = "chatRoomActor";
+    public static final String URL_AKKA_ACTOR = "akka://akka-spring/user/";
+    public static final String ACTOR_SYSTEM = "akka-spring";
+    public static final String ACTOR_COMMON_BEAN_NAME = "commonActor";
+    public static final String ACTOR_COMMON_NAME = "actorCommon";
 }

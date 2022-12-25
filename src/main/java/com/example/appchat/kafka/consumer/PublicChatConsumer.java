@@ -1,6 +1,8 @@
 package com.example.appchat.kafka.consumer;
 
 
+import com.example.appchat.constant.KafkaGroup;
+import com.example.appchat.constant.KafkaTopic;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.entity.UserEntity;
 import com.example.appchat.service.UserChatService;
@@ -19,19 +21,19 @@ public class PublicChatConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublicChatConsumer.class);
     private final ObjectMapperUtil objectMapperUtil;
 
-    @KafkaListener(topics = "publicTopicChat", groupId = "groupPublicChat")
+    @KafkaListener(topics = KafkaTopic.PUBLIC_CHAT_TOPIC, groupId = KafkaGroup.PUBLIC_CHAT_GROUP)
     public void publicChatConsumer1(ConsumerRecord<String, String> record, MessageKafka messageKafka) throws Exception {
         sendMessagePublic(record, messageKafka);
         LOGGER.info("Message received 1");
     }
 
-    @KafkaListener(topics = "publicTopicChat", groupId = "groupPublicChat")
+    @KafkaListener(topics = KafkaTopic.PUBLIC_CHAT_TOPIC, groupId = KafkaGroup.PUBLIC_CHAT_GROUP)
     public void publicChatConsumer2(ConsumerRecord<String, String> record, MessageKafka messageKafka) throws Exception {
         sendMessagePublic(record, messageKafka);
         LOGGER.info("Message received 2");
     }
 
-    @KafkaListener(topics = "publicTopicChat", groupId = "groupPublicChat")
+    @KafkaListener(topics = KafkaTopic.PUBLIC_CHAT_TOPIC, groupId = KafkaGroup.PUBLIC_CHAT_GROUP)
     public void publicChatConsumer3(ConsumerRecord<String, String> record, MessageKafka messageKafka) throws Exception {
         sendMessagePublic(record, messageKafka);
         LOGGER.info("Message received 3");

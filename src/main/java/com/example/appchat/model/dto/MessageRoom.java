@@ -15,5 +15,5 @@ public class MessageRoom {
     private String senderName;
     private String message;
     private Timestamp time;
-    private Long room_public_id;
+    private Long roomPublicId;
 }

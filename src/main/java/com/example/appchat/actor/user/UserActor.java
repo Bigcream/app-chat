@@ -33,7 +33,7 @@ public class UserActor extends AbstractActor {
                 })
                 .match(ChatRoom.SendPrivateChat.class, msg ->{
                     sender = sender();
-                    sendToUser(msg.message);
+                    sendToPrivateChat(msg.message);
                 })
                 .match(UserEntity.class, user -> {
                     sender = sender();
@@ -47,7 +47,7 @@ public class UserActor extends AbstractActor {
         return msg.getMessage();
     }
 
-    private void sendToUser(MessageKafka msg) {
+    private void sendToPrivateChat(MessageKafka msg) {
         simpMessagingTemplate.convertAndSendToUser(msg.getReceiverName(),"/private",msg);
         System.out.println("sender private " + sender.path());
     }
