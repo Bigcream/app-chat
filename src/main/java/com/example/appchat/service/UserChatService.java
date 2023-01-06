@@ -28,7 +28,7 @@ public class UserChatService {
     public void sendPublicChat(MessageKafka message) throws Exception {
         ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatMessage(message), userActor);
-        System.out.println("test " + userActor.path());
+        System.out.println("test receive" + userActor.path());
     }
     public void sendPrivateChat(MessageKafka message) throws Exception{
         ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);

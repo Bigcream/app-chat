@@ -17,18 +17,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/appchat")
 public class ChatController extends BaseController {
     private final ActorRef actorCommon;
     private final ChatRoomService chatRoomService;
     private final UserChatService userChatService;
 
-    @MessageMapping("/message")
-    public MessageKafka receiveMessage(@Payload MessageKafka message) throws Exception {
+    @PostMapping("/send-to-public-chat")
+    public MessageKafka sendToPublicChat(@RequestBody MessageKafka message) throws Exception {
         userChatService.sendPublicChat(message);
         return message;
     }
 
-    @MessageMapping("/join-room")
+    @MessageMapping("/send-to-public-chat")
     public MessageKafka userJoinRoom(@Payload MessageKafka message) throws Exception {
         userChatService.joinRoom(message);
         return message;
@@ -38,8 +39,8 @@ public class ChatController extends BaseController {
 //        return chatRoomService.createRoom(message);
 //    }
 
-    @MessageMapping("/private-message")
-    public MessageKafka recMessage(@Payload MessageKafka message) throws Exception {
+    @PostMapping("/send-to-private-chat")
+    public MessageKafka sendToPrivateChat(@RequestBody MessageKafka message) throws Exception {
         userChatService.sendPrivateChat(message);
         return message;
     }
