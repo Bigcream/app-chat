@@ -12,9 +12,9 @@ import java.sql.Timestamp;
 @Builder
 public class MessageKafka {
     private Object data;
-    private String senderName;
-    private String receiverName;
-    private String message;
+    private String sender;
+    private String receiver;
+    private String content;
     private Timestamp time;
     private Status status;
     private Long roomPublicId;

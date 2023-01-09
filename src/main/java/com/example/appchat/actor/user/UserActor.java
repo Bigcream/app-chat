@@ -48,7 +48,7 @@ public class UserActor extends AbstractActor {
     }
 
     private void sendToPrivateChat(MessageKafka msg) {
-        simpMessagingTemplate.convertAndSendToUser(msg.getReceiverName(),"/private",msg);
+        simpMessagingTemplate.convertAndSendToUser(msg.getReceiver(),"/private",msg);
         System.out.println("sender private " + sender.path());
     }
     private UserEntity saveUser(UserEntity user){

@@ -21,17 +21,17 @@ public class UserChatService {
     private final ActorSystem actorSystem;
     private final HashMap<String, AtomicLong> mapId;
     public void joinRoom(MessageKafka message) throws Exception {
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("join " + userActor.path());
     }
     public void sendPublicChat(MessageKafka message) throws Exception {
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("test receive" + userActor.path());
     }
     public void sendPrivateChat(MessageKafka message) throws Exception{
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSenderName(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
         userActor.tell(new ChatRoom.SendPrivateChat(message), userActor);
     }
 //    public UserEntity register(UserEntity user) throws Exception {
