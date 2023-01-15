@@ -1,13 +1,8 @@
 package com.example.appchat.service;
 
-import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.example.appchat.actor.chatroom.ChatRoom;
-import com.example.appchat.constant.ActorName;
-import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.entity.ChatRoomEntity;
 import com.example.appchat.model.entity.UserEntity;
-import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

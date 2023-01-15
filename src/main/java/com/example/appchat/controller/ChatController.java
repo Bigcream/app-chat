@@ -1,7 +1,7 @@
 package com.example.appchat.controller;
 
 import akka.actor.ActorRef;
-import com.example.appchat.actor.chatroom.ChatRoom;
+import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.model.dto.ChatRoomDTO;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.service.ChatRoomService;
@@ -29,11 +29,12 @@ public class ChatController extends BaseController {
         return message;
     }
 
-    @MessageMapping("/send-to-public-chat")
-    public MessageKafka userJoinRoom(@Payload MessageKafka message) throws Exception {
-        userChatService.joinRoom(message);
+    @PostMapping("/create-conversation")
+    public MessageKafka createConversationActor(@RequestBody MessageKafka message) throws Exception {
+        userChatService.createConversationActor(message);
         return message;
     }
+
 //    @MessageMapping("/create-room")
 //    public String userCreateRoom(@Payload MessageKafka message) throws Exception {
 //        return chatRoomService.createRoom(message);
@@ -46,7 +47,7 @@ public class ChatController extends BaseController {
     }
     @GetMapping("/room-available")
     public List<ChatRoomDTO> getAllRoomAvailable(){
-        return ActorUtil.askObject(actorCommon, new ChatRoom.GetAllRoomAvailable(), ChatRoomDTO.class);
+        return ActorUtil.askObject(actorCommon, new ConversationCommand.GetAllRoomAvailable(), ChatRoomDTO.class);
     }
     @GetMapping("/leave-room/{roomId}")
     public ResponseEntity<Void> leaveRoom(@PathVariable Long roomId, @RequestParam String username){
@@ -54,6 +55,6 @@ public class ChatController extends BaseController {
     }
     @GetMapping("/all-user-online")
     public List<String> getAllUserOnline(){
-        return ActorUtil.askObject(actorCommon, new ChatRoom.GetAllUserOnline(), String.class);
+        return ActorUtil.askObject(actorCommon, new ConversationCommand.GetAllUserOnline(), String.class);
     }
 }

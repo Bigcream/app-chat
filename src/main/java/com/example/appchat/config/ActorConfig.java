@@ -34,16 +34,14 @@ public class ActorConfig {
     @Bean(name = ActorName.ACTOR_COMMON_NAME)
     public ActorRef create(){
         ActorSystem actorSystem = actorSystem();
-        ActorRef actorCommon = actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
+        return actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
                 .props(ActorName.ACTOR_COMMON_BEAN_NAME), ActorName.ACTOR_COMMON_NAME);
-        return actorCommon;
     }
 
-    @Bean(name = "userActor1")
-    public ActorRef create1(){
+    @Bean(name = ActorName.ACTOR_SUPERVISOR_NAME)
+    public ActorRef createsSupervisorActor(){
         ActorSystem actorSystem = actorSystem();
-        ActorRef testActor = actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
-                .props("userActor"), "userActor");
-        return testActor;
+        return actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
+                .props(ActorName.ACTOR_SUPERVISOR_BEAN_NAME), ActorName.ACTOR_SUPERVISOR_NAME);
     }
 }

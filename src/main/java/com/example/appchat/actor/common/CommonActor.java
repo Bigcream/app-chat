@@ -3,7 +3,7 @@ package com.example.appchat.actor.common;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
-import com.example.appchat.actor.chatroom.ChatRoom;
+import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.model.dto.ChatRoomDTO;
 import com.example.appchat.model.entity.ChatRoomEntity;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +30,13 @@ public class CommonActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create()
-                .match(ChatRoom.GetAllRoomAvailable.class, msg -> {
+                .match(ConversationCommand.GetAllRoomAvailable.class, msg -> {
                     sender = sender();
                     List<ChatRoomDTO> chatRoomDTOs = getAllRoomAvailable();
                     sender.tell(chatRoomDTOs, self());
                     System.out.println("sent room");
                 })
-                .match(ChatRoom.GetAllUserOnline.class, msg ->{
+                .match(ConversationCommand.GetAllUserOnline.class, msg ->{
                     sender = sender();
                     List<String> users = getAllUserOnline();
                     sender.tell(users, self());

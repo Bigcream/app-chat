@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IUserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepo extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByUsername(String username);
     @Query(value = "SELECT * from user ORDER BY id DESC LIMIT 1", nativeQuery = true)

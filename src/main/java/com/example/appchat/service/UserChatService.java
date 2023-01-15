@@ -2,11 +2,12 @@ package com.example.appchat.service;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.example.appchat.actor.chatroom.ChatRoom;
+import com.example.appchat.actor.conversation.ConversationCommand;
+import com.example.appchat.actor.supervisor.SupervisorCommand;
 import com.example.appchat.constant.ActorName;
 import com.example.appchat.model.dto.ChatMessage;
 import com.example.appchat.model.dto.MessageKafka;
-import com.example.appchat.repository.IUserRepository;
+import com.example.appchat.repository.UserRepo;
 import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 @RequiredArgsConstructor
 public class UserChatService {
-    private final IUserRepository userRepo;
+    private final UserRepo userRepo;
     private final ActorSystem actorSystem;
+    private final ActorRef actorSupervisor;
     private final HashMap<String, AtomicLong> mapId;
     public void joinRoom(MessageKafka message) throws Exception {
         ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
@@ -26,13 +28,23 @@ public class UserChatService {
         System.out.println("join " + userActor.path());
     }
     public void sendPublicChat(MessageKafka message) throws Exception {
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
-        userActor.tell(new ChatMessage(message), userActor);
-        System.out.println("test receive" + userActor.path());
+//        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
+//        userActor.tell(new ChatMessage(message), userActor);
+        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
+        System.out.println("test receive public: " + actorSupervisor.path());
     }
+    public void createConversationActor(MessageKafka message) throws Exception{
+//        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
+//        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
+        actorSupervisor.tell(new SupervisorCommand.CreateConversationActor(message), actorSupervisor);
+        System.out.println("test receive create conversation actor: " + actorSupervisor.path());
+    }
+
     public void sendPrivateChat(MessageKafka message) throws Exception{
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
-        userActor.tell(new ChatRoom.SendPrivateChat(message), userActor);
+//        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
+//        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
+        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
+        System.out.println("test receive private: " + actorSupervisor.path());
     }
 //    public UserEntity register(UserEntity user) throws Exception {
 //        UserEntity user1 = new UserEntity();

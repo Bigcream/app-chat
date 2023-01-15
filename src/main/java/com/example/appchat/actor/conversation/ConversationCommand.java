@@ -1,18 +1,24 @@
-package com.example.appchat.actor.chatroom;
+package com.example.appchat.actor.conversation;
 
 
 import com.example.appchat.model.dto.MessageKafka;
 
-public class ChatRoom {
-    public static final class CreateRoom {
+public class ConversationCommand {
+    public static final class Create {
         public final MessageKafka message;
-        public CreateRoom(MessageKafka message) {
+        public Create(MessageKafka message) {
             this.message = message;
         }
     }
-    public static final class SendPrivateChat {
+    public static final class SendToPrivateChat {
         public final MessageKafka message;
-        public SendPrivateChat(MessageKafka message) {
+        public SendToPrivateChat(MessageKafka message) {
+            this.message = message;
+        }
+    }
+    public static final class SendToPublicChat {
+        public final MessageKafka message;
+        public SendToPublicChat(MessageKafka message) {
             this.message = message;
         }
     }

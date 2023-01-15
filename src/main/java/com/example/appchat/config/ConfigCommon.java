@@ -2,7 +2,7 @@ package com.example.appchat.config;
 
 import com.example.appchat.model.entity.ChatRoomEntity;
 import com.example.appchat.model.entity.UserEntity;
-import com.example.appchat.repository.IUserRepository;
+import com.example.appchat.repository.UserRepo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Configuration
 @RequiredArgsConstructor
 public class ConfigCommon {
-    private final IUserRepository userRepo;
+    private final UserRepo userRepo;
 
     @Bean
     public ObjectMapper getObjectMapper(){

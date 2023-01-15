@@ -17,7 +17,7 @@ public class MessageKafka {
     private String content;
     private Timestamp time;
     private Status status;
-    private Long roomPublicId;
+    private String conversationId;
     private Long senderId;
     private Long receiverId;
 }

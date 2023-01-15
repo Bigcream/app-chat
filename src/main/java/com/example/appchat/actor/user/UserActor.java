@@ -3,11 +3,11 @@ package com.example.appchat.actor.user;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
-import com.example.appchat.actor.chatroom.ChatRoom;
+import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.model.dto.ChatMessage;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.entity.UserEntity;
-import com.example.appchat.repository.IUserRepository;
+import com.example.appchat.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class UserActor extends AbstractActor {
     private ActorRef sender;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final IUserRepository userRepo;
+    private final UserRepo userRepo;
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create()
@@ -31,7 +31,7 @@ public class UserActor extends AbstractActor {
                     MessageKafka response = chat(msg);
                     sender.tell(response, self());
                 })
-                .match(ChatRoom.SendPrivateChat.class, msg ->{
+                .match(ConversationCommand.SendToPrivateChat.class, msg ->{
                     sender = sender();
                     sendToPrivateChat(msg.message);
                 })
