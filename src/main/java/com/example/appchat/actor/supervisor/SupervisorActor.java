@@ -6,6 +6,7 @@ import akka.japi.pf.ReceiveBuilder;
 import com.example.appchat.actor.conversation.ConversationActor;
 import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.constant.ActorName;
+import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -49,17 +50,20 @@ public class SupervisorActor extends AbstractActor {
     public Receive createReceive() {
         return ReceiveBuilder.create()
                 .match(SupervisorCommand.CreateConversationActor.class, create -> {
-                    getContext().actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
-                            .props("conversationActor"), create.message.getConversationId());
+                    ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
                     System.out.println("Conversation created");
                 })
                 .match(SupervisorCommand.ForwardMessage.class, forward -> {
                     sender = sender();
-                    Optional<ActorRef> childActor = getContext().findChild(forward.message.getConversationId());
-                    if(childActor.isPresent()){
-                        childActor.get().tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor.get());
-                        System.out.println("Conversation sent" + childActor.get().path());
+                    ActorRef childActor;
+                    Optional<ActorRef> optChildActor = getContext().findChild(forward.message.getConversationId());
+                    if(!optChildActor.isPresent()){
+                        childActor = ActorUtil.getInstanceOfChildActor(getContext(), forward.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+                    }else {
+                        childActor = optChildActor.get();
                     }
+                    childActor.tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor);
+                    System.out.println("Conversation sent" + childActor.path());
                 })
                 .build();
     }

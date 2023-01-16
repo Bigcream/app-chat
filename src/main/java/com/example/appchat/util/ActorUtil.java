@@ -32,6 +32,21 @@ public class ActorUtil {
         return instanceOfActor;
     }
 
+    public static ActorRef getInstanceOfChildActor(ActorContext parent, String name, ActorSystem actorSystem, String actorName) throws Exception {
+        ActorRef instanceOfActor;
+        ActorSelection sel = actorSystem.actorSelection(ActorName.URL_AKKA_ACTOR + name);
+        AskableActorSelection asker = new AskableActorSelection(sel);
+        Future<Object> future = asker.ask(new Identify(1), new Timeout(5,
+                TimeUnit.SECONDS));
+        ActorIdentity identity = (ActorIdentity) Await.result(future, Duration.apply(5, "seconds"));
+        Optional<ActorRef> reference = identity.getActorRef();
+        // Actor exists
+        // Actor does not exits
+        instanceOfActor = reference.orElseGet(() ->  parent.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
+                .props(actorName), name));
+        return instanceOfActor;
+    }
+
     public static  <T> T ask(ActorRef actor, Object msg, Class<T> returnTypeClass){
         return  (T) Patterns.ask(actor, msg, java.time.Duration.ofMillis(2000)).toCompletableFuture().join();
     }

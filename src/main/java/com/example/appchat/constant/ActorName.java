@@ -8,4 +8,5 @@ public class ActorName {
     public static final String ACTOR_COMMON_NAME = "actorCommon";
     public static final String ACTOR_SUPERVISOR_NAME = "actorSupervisor";
     public static final String ACTOR_SUPERVISOR_BEAN_NAME = "supervisorActor";
+    public static final String ACTOR_CONVERSATION_BEAN_NAME = "conversationActor";
 }
