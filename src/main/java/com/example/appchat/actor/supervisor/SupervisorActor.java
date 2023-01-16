@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
+import java.util.Optional;
+
 import static com.example.appchat.actor.common.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
 @Component
@@ -48,14 +50,16 @@ public class SupervisorActor extends AbstractActor {
         return ReceiveBuilder.create()
                 .match(SupervisorCommand.CreateConversationActor.class, create -> {
                     getContext().actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem)
-                            .props("conversationActor"), "63bc3c0acf7a2b6849fdd9e9");
+                            .props("conversationActor"), create.message.getConversationId());
                     System.out.println("Conversation created");
                 })
                 .match(SupervisorCommand.ForwardMessage.class, forward -> {
                     sender = sender();
-                    ActorRef childActor = getContext().getChild("63bc3c0acf7a2b6849fdd9e9");
-                    childActor.tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor);
-                    System.out.println("Conversation sent" + childActor.path());
+                    Optional<ActorRef> childActor = getContext().findChild(forward.message.getConversationId());
+                    if(childActor.isPresent()){
+                        childActor.get().tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor.get());
+                        System.out.println("Conversation sent" + childActor.get().path());
+                    }
                 })
                 .build();
     }
