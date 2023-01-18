@@ -27,9 +27,9 @@ public class UserChatService {
         System.out.println("join " + userActor.path());
     }
     public void sendPublicChat(MessageKafka message) throws Exception {
-//        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
-//        userActor.tell(new ChatMessage(message), userActor);
-        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
+        userActor.tell(new ChatMessage(message), userActor);
+//        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
         System.out.println("test receive public: " + actorSupervisor.path());
     }
     public void createConversationActor(MessageKafka message) throws Exception{
