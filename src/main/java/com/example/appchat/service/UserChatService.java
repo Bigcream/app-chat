@@ -2,7 +2,6 @@ package com.example.appchat.service;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.actor.supervisor.SupervisorCommand;
 import com.example.appchat.constant.ActorName;
 import com.example.appchat.model.dto.ChatMessage;

@@ -32,24 +32,14 @@ public class ChatRoomEntity implements Serializable {
     @Column(name = "chat_room_id", unique = true)
     private Long chatRoomId;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by")
-    @CreatedBy
-    private UserEntity createdBy;
 
     @CreatedDate
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "chatRoom")
-    private Set<UserEntity> users;
-
     public ChatRoomDTO convertToDTO(){
         return ChatRoomDTO.builder()
                 .chatRoomId(this.getChatRoomId())
-                .createBy(this.getCreatedBy())
-                .userInRooms(this.getUsers())
                 .build();
     }
 }

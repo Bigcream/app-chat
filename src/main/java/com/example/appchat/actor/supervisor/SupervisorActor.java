@@ -50,8 +50,8 @@ public class SupervisorActor extends AbstractActor {
     public Receive createReceive() {
         return ReceiveBuilder.create()
                 .match(SupervisorCommand.CreateConversationActor.class, create -> {
-                    ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
-                    System.out.println("Conversation created");
+                    ActorRef actorRef = ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+                    System.out.println("Conversation created" + actorRef.path());
                 })
                 .match(SupervisorCommand.ForwardMessage.class, forward -> {
                     sender = sender();

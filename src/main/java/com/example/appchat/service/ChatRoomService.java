@@ -35,8 +35,6 @@ public class ChatRoomService {
             number = rnd.nextInt(999999999);
             if (!chatRoomMap.containsKey((long) number)){
                 chatRoom.setChatRoomId((long)number);
-                chatRoom.setCreatedBy(user);
-                chatRoom.setUsers(userEntitySet);
                 chatRooms.add(chatRoom);
                 chatRoomMap.put((long) number, chatRooms);
                 check = true;
@@ -46,11 +44,6 @@ public class ChatRoomService {
     }
     public Void leaveRoom(Long roomId, String username){
         chatRoomMap.forEach((aLong, chatRoomEntities) -> {
-            if(aLong.equals(roomId)){
-                chatRoomEntities.forEach(chatRoomEntity -> {chatRoomEntity.getUsers().removeIf(
-                        userEntity -> userEntity.getUsername().equals(username)
-                );});
-            }
         });
         return null;
     }

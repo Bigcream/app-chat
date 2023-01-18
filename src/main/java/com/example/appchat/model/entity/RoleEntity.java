@@ -1,32 +1,18 @@
 package com.example.appchat.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Id;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Set;
-
-@Entity
-@Table(name = "role")
+@Document(collection = "role")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleEntity implements Serializable {
-
-    private static final long serialVersionUID = -6500665823330706018L;
+@Builder
+public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-
-    @Column(name = "name", nullable = false)
+    private String id;
     private String name;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<UserEntity> users;
 }

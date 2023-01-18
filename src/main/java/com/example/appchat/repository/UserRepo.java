@@ -1,14 +1,12 @@
 package com.example.appchat.repository;
 
 import com.example.appchat.model.entity.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface UserRepo extends JpaRepository<UserEntity, Long> {
+import java.util.Optional;
 
-    UserEntity findByUsername(String username);
-    @Query(value = "SELECT * from user ORDER BY id DESC LIMIT 1", nativeQuery = true)
-    UserEntity getUserIdMax();
+@Repository
+public interface UserRepo extends MongoRepository<UserEntity, String> {
+    Optional<UserEntity> findByUsername(String username);
 }
