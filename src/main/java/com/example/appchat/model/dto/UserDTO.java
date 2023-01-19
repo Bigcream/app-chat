@@ -2,6 +2,7 @@ package com.example.appchat.model.dto;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -10,7 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class UserDTO {
-    private String id;
+    private String sessionId;
     private String username;
-    private String email;
+    private String destination;
 }

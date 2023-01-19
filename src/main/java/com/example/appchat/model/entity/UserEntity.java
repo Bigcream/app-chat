@@ -21,11 +21,4 @@ public class UserEntity {
     private String password;
     private Set<RoleEntity> roles;
 
-    public UserDTO convertToDTO(){
-        return UserDTO.builder()
-                .email(this.getEmail())
-                .id(this.getId())
-                .build();
-    }
-
 }
