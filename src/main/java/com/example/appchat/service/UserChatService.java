@@ -36,14 +36,12 @@ public class UserChatService {
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
 //        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
         actorSupervisor.tell(new SupervisorCommand.CreateConversationActor(message), actorSupervisor);
-        System.out.println("test receive create conversation actor: " + actorSupervisor.path());
     }
 
     public void sendPrivateChat(MessageKafka message) throws Exception{
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
 //        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
         actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
-        System.out.println("test receive private: " + actorSupervisor.path());
     }
 //    public UserEntity register(UserEntity user) throws Exception {
 //        UserEntity user1 = new UserEntity();

@@ -31,10 +31,13 @@ public class SupervisorActor extends AbstractActor {
                         @Override
                         public SupervisorStrategy.Directive apply(Throwable t) {
                             if (t instanceof ArithmeticException) {
+                                log.info("SupervisorActor resume child actor");
                                 return SupervisorStrategy.resume();
                             } else if (t instanceof NullPointerException) {
+                                log.info("SupervisorActor restart child actor");
                                 return SupervisorStrategy.restart();
                             } else if (t instanceof IllegalArgumentException) {
+                                log.info("SupervisorActor stop child actor");
                                 return SupervisorStrategy.stop();
                             } else {
                                 return SupervisorStrategy.escalate();
@@ -50,20 +53,47 @@ public class SupervisorActor extends AbstractActor {
     public Receive createReceive() {
         return ReceiveBuilder.create()
                 .match(SupervisorCommand.CreateConversationActor.class, create -> {
-                    ActorRef actorRef = ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
-                    System.out.println("Conversation created" + actorRef.path());
+//                    try {
+//                        ActorRef actorRef = ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+//                        log.info("Conversation created" + actorRef.path());
+//                    }catch (Exception e){
+//                        log.error("Error when create actor " + create.message.getConversationId() + ", because: " + e.getMessage());
+//                    }
+                    sender = sender();
+                    ActorRef childActor;
+                    Optional<ActorRef> optChildActor = getContext().findChild(create.message.getConversationId());
+                    if(!optChildActor.isPresent()){
+                        childActor = ActorUtil.getInstanceOfChildActor(getContext(), create.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+                    }else {
+                        childActor = optChildActor.get();
+                    }
+                    try {
+                        childActor.tell(new NullPointerException(), ActorRef.noSender());
+                        log.info("Sent test message to conversation actor:  " + childActor.path());
+                    }catch (Exception e){
+                        log.error("Error test when conversation actor:" + childActor.path() + " send message " + ", because: " + e.getMessage());
+                    }
                 })
                 .match(SupervisorCommand.ForwardMessage.class, forward -> {
                     sender = sender();
+                    log.info("Total child restart" + getContext().getChildren());
                     ActorRef childActor;
                     Optional<ActorRef> optChildActor = getContext().findChild(forward.message.getConversationId());
                     if(!optChildActor.isPresent()){
                         childActor = ActorUtil.getInstanceOfChildActor(getContext(), forward.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+                        log.info("create new actor: " + childActor.path());
+
                     }else {
                         childActor = optChildActor.get();
+                        log.info("already exist actor: " + childActor.path());
                     }
-                    childActor.tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor);
-                    System.out.println("Conversation sent" + childActor.path());
+                    try {
+                        childActor.tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor);
+//                        childActor.tell(new NullPointerException(), ActorRef.noSender());
+                        log.info("Sent message to conversation actor:  " + childActor.path());
+                    }catch (Exception e){
+                        log.error("Error when conversation actor:" + childActor.path() + " send message " + ", because: " + e.getMessage());
+                    }
                 })
                 .build();
     }
