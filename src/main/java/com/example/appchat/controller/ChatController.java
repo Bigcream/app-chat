@@ -2,16 +2,16 @@ package com.example.appchat.controller;
 
 import akka.actor.ActorRef;
 import com.example.appchat.actor.conversation.ConversationCommand;
+import com.example.appchat.constant.RedisKeyPattern;
 import com.example.appchat.model.dto.ChatRoomDTO;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.service.ChatRoomService;
 import com.example.appchat.service.UserChatService;
 import com.example.appchat.util.ActorUtil;
+import com.example.appchat.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,6 +22,7 @@ public class ChatController extends BaseController {
     private final ActorRef actorCommon;
     private final ChatRoomService chatRoomService;
     private final UserChatService userChatService;
+    private final RedisUtil redisUtil;
 
     @PostMapping("/send-to-public-chat")
     public MessageKafka sendToPublicChat(@RequestBody MessageKafka message) throws Exception {
@@ -54,7 +55,7 @@ public class ChatController extends BaseController {
         return new  ResponseEntity<>(chatRoomService.leaveRoom(roomId, username), noCacheHeader, HttpStatus.OK);
     }
     @GetMapping("/all-user-online")
-    public List<String> getAllUserOnline(){
-        return ActorUtil.askObject(actorCommon, new ConversationCommand.GetAllUserOnline(), String.class);
+    public List<Object> getAllUserOnline(){
+        return redisUtil.findAllByKeyPattern(RedisKeyPattern.USER_ONlINE + RedisKeyPattern.ASTERISK);
     }
 }

@@ -1,10 +1,11 @@
 package com.example.appchat.config;
 
 
+import com.example.appchat.constant.RedisKeyPattern;
 import com.example.appchat.model.dto.UserDTO;
 import com.example.appchat.model.entity.User;
+import com.example.appchat.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -13,17 +14,23 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserInterceptor implements ChannelInterceptor {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisUtil redisUtil;
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         assert accessor != null;
         UserDTO userDTO = new UserDTO();
+        Object simpSessionId = message.getHeaders().get(SimpMessageHeaderAccessor.SESSION_ID_HEADER);
+        assert simpSessionId != null;
+        String userKey = RedisKeyPattern.USER_ONlINE + simpSessionId;
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             Object raw = message.getHeaders().get(SimpMessageHeaderAccessor.NATIVE_HEADERS);
             if (raw instanceof Map) {
@@ -31,16 +38,26 @@ public class UserInterceptor implements ChannelInterceptor {
                 accessor.setUser(new User(name.toString()));
                 userDTO.setUsername(name.toString());
             }
-            Object rawSimpSessionId = message.getHeaders().get(SimpMessageHeaderAccessor.SESSION_ID_HEADER);
-            if (rawSimpSessionId instanceof Map) {
-                Object simpSessionId = ((Map<?, ?>) raw).get("simpSessionId");
-                userDTO.setSessionId(simpSessionId.toString());
+            userDTO.setSessionId(simpSessionId.toString());
+            redisUtil.save(userKey, userDTO);
+            System.out.println("redis key test: " + RedisKeyPattern.USER_ONlINE + userDTO.getSessionId());
+        }
+
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            List<String> destinations = new ArrayList<>();
+            Object destination = message.getHeaders().get(SimpMessageHeaderAccessor.DESTINATION_HEADER);
+            userDTO = (UserDTO) redisUtil.findByKey(userKey);
+            if(Optional.ofNullable(userDTO.getDestination()).isPresent()){
+                destinations = userDTO.getDestination();
             }
-            redisTemplate.opsForValue().set(userDTO.getSessionId(), userDTO);
+            assert destination != null;
+            destinations.add(destination.toString());
+            userDTO.setDestination(destinations);
+            redisUtil.save(userKey, userDTO);
         }
 
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-            redisTemplate.delete(userDTO.getSessionId());
+            redisUtil.delete(userKey);
         }
         return message;
     }
