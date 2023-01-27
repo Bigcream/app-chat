@@ -26,11 +26,9 @@ public class UserChatService {
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("join " + userActor.path());
     }
-    public void sendPublicChat(MessageKafka message) throws Exception {
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
-        userActor.tell(new ChatMessage(message), userActor);
+    public void sendPublicChat(MessageKafka message) {
 //        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
-        System.out.println("test receive public: " + actorSupervisor.path());
+        actorSupervisor.tell(new SupervisorCommand.ForwardPublicMessage(message), actorSupervisor);
     }
     public void createConversationActor(MessageKafka message) throws Exception{
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
@@ -38,10 +36,10 @@ public class UserChatService {
         actorSupervisor.tell(new SupervisorCommand.CreateConversationActor(message), actorSupervisor);
     }
 
-    public void sendPrivateChat(MessageKafka message) throws Exception{
+    public void sendPrivateChat(MessageKafka message) {
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
 //        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
-        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
+        actorSupervisor.tell(new SupervisorCommand.ForwardPrivateMessage(message), actorSupervisor);
     }
 //    public UserEntity register(UserEntity user) throws Exception {
 //        UserEntity user1 = new UserEntity();

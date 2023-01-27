@@ -3,9 +3,9 @@ package com.example.appchat.actor.supervisor;
 import akka.actor.*;
 import akka.japi.Function;
 import akka.japi.pf.ReceiveBuilder;
-import com.example.appchat.actor.conversation.ConversationActor;
 import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.constant.ActorName;
+import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.util.ActorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
 import java.util.Optional;
-
-import static com.example.appchat.actor.common.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -74,19 +72,10 @@ public class SupervisorActor extends AbstractActor {
                         log.error("Error test when conversation actor:" + childActor.path() + " send message " + ", because: " + e.getMessage());
                     }
                 })
-                .match(SupervisorCommand.ForwardMessage.class, forward -> {
+                .match(SupervisorCommand.ForwardPrivateMessage.class, forward -> {
                     sender = sender();
-                    log.info("Total child restart" + getContext().getChildren());
-                    ActorRef childActor;
-                    Optional<ActorRef> optChildActor = getContext().findChild(forward.message.getConversationId());
-                    if(!optChildActor.isPresent()){
-                        childActor = ActorUtil.getInstanceOfChildActor(getContext(), forward.message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
-                        log.info("create new actor: " + childActor.path());
-
-                    }else {
-                        childActor = optChildActor.get();
-                        log.info("already exist actor: " + childActor.path());
-                    }
+//                    log.info("Total child restart" + getContext().getChildren());
+                    ActorRef childActor = getChildActor(forward.message);
                     try {
                         childActor.tell(new ConversationCommand.SendToPrivateChat(forward.message), childActor);
 //                        childActor.tell(new NullPointerException(), ActorRef.noSender());
@@ -95,6 +84,30 @@ public class SupervisorActor extends AbstractActor {
                         log.error("Error when conversation actor:" + childActor.path() + " send message " + ", because: " + e.getMessage());
                     }
                 })
+                .match(SupervisorCommand.ForwardPublicMessage.class, forward -> {
+                    ActorRef childActor = getChildActor(forward.message);
+                    try {
+                        childActor.tell(new ConversationCommand.SendToPublicChat(forward.message), childActor);
+//                        childActor.tell(new NullPointerException(), ActorRef.noSender());
+                        log.info("Sent message to public conversation actor:  " + childActor.path());
+                    }catch (Exception e){
+                        log.error("Error when public conversation actor:" + childActor.path() + " send message " + ", because: " + e.getMessage());
+                    }
+                })
                 .build();
     }
+
+     public ActorRef getChildActor(MessageKafka message) throws Exception {
+         ActorRef childActor;
+         Optional<ActorRef> optChildActor = getContext().findChild(message.getConversationId());
+         if(!optChildActor.isPresent()){
+             childActor = ActorUtil.getInstanceOfChildActor(getContext(), message.getConversationId(), actorSystem, ActorName.ACTOR_CONVERSATION_BEAN_NAME);
+             log.info("create new actor: " + childActor.path());
+
+         }else {
+             childActor = optChildActor.get();
+             log.info("already exist actor: " + childActor.path());
+         }
+         return childActor;
+     }
 }

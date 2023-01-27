@@ -10,9 +10,16 @@ public class SupervisorCommand {
         }
     }
 
-    public static final class ForwardMessage{
+    public static final class ForwardPrivateMessage {
         public final MessageKafka message;
-        public ForwardMessage(MessageKafka message) {
+        public ForwardPrivateMessage(MessageKafka message) {
+            this.message = message;
+        }
+    }
+
+    public static final class ForwardPublicMessage {
+        public final MessageKafka message;
+        public ForwardPublicMessage(MessageKafka message) {
             this.message = message;
         }
     }

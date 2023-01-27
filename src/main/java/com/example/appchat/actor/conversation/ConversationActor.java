@@ -33,8 +33,14 @@ public class ConversationActor extends AbstractActor {
         return ReceiveBuilder.create()
                 .match(ConversationCommand.SendToPublicChat.class, msg -> {
                     sender = sender();
-                    sendToPublicChat(msg.message);
-//                    redisTemplate.opsForValue().set(response.getRoomId().toString(), response);
+                    try {
+                        sendToPublicChat(msg.message);
+                        log.info("Sent message to public chat:  " + msg.message.getReceiver());
+                    }catch (Exception e){
+                        log.error("Error when send message to public chat:" + msg.message.getReceiver() + ", because: " + e.getMessage());
+                        sender.tell(new ConversationCommand.SendToPublicChat(msg.message), self());
+                        log.info("Retry send message to public user success");
+                    }
                 })
                 .match(ConversationCommand.Create.class, create -> {
                     sender = sender();
