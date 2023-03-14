@@ -1,7 +1,7 @@
 package com.example.appchat.actor.conversation;
 
 
-import com.example.appchat.model.dto.MessageKafka;
+import com.kafkaservice.payload.MessageKafka;
 
 public class ConversationCommand {
     public static final class Create {

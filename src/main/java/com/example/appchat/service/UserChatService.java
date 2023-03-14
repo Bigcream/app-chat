@@ -5,9 +5,9 @@ import akka.actor.ActorSystem;
 import com.example.appchat.actor.supervisor.SupervisorCommand;
 import com.example.appchat.constant.ActorName;
 import com.example.appchat.model.dto.ChatMessage;
-import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.repository.UserRepo;
 import com.example.appchat.util.ActorUtil;
+import com.kafkaservice.payload.MessageKafka;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

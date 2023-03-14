@@ -17,23 +17,42 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-	<scm>
-		<developerConnection>scm:git:git@github.com:Bigcream/app-chat.git</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
+<!--	<scm>-->
+<!--		<developerConnection>scm:git:git@github.com:Bigcream/app-chat.git</developerConnection>-->
+<!--		<tag>HEAD</tag>-->
+<!--	</scm>-->
 
+<!--	<distributionManagement>-->
+<!--		<repository>-->
+<!--			<id>nexus</id>-->
+<!--			<name>maven-releases</name>-->
+<!--			<url>http://localhost:8081/repository/maven-releases/</url>-->
+<!--		</repository>-->
+<!--		<snapshotRepository>-->
+<!--			<id>nexus</id>-->
+<!--			<name>maven-snapshots</name>-->
+<!--			<url>http://localhost:8081/repository/maven-snapshots/</url>-->
+<!--		</snapshotRepository>-->
+<!--	</distributionManagement>-->
 	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<name>maven-releases</name>
-			<url>http://localhost:8081/repository/maven-releases/</url>
-		</repository>
 		<snapshotRepository>
-			<id>nexus</id>
-			<name>maven-snapshots</name>
-			<url>http://localhost:8081/repository/maven-snapshots/</url>
+			<id>artifact-registry</id>
+			<url>artifactregistry://us-maven.pkg.dev/autonomous-time-380112/maven-repo</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>artifact-registry</id>
+			<url>artifactregistry://us-maven.pkg.dev/autonomous-time-380112/maven-repo</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -121,6 +140,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com</groupId>
+			<artifactId>kafkaservice</artifactId>
+			<version>0.0.6-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -128,9 +153,21 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.cloud.sql</groupId>
+			<artifactId>mysql-socket-factory-connector-j-8</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>com.google.cloud.artifactregistry</groupId>
+				<artifactId>artifactregistry-maven-wagon</artifactId>
+				<version>2.2.0</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

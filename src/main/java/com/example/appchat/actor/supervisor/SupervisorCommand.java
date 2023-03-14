@@ -1,6 +1,6 @@
 package com.example.appchat.actor.supervisor;
 
-import com.example.appchat.model.dto.MessageKafka;
+import com.kafkaservice.payload.MessageKafka;
 
 public class SupervisorCommand {
     public static final class CreateConversationActor {
