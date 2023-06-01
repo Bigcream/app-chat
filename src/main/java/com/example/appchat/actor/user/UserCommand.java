@@ -1,9 +1,9 @@
-package com.example.appchat.actor.conversation;
+package com.example.appchat.actor.user;
 
 
 import com.example.appchat.model.dto.MessageKafka;
 
-public class ConversationCommand {
+public class UserCommand {
     public static final class Create {
         public final MessageKafka message;
         public Create(MessageKafka message) {

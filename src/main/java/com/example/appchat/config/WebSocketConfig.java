@@ -1,5 +1,6 @@
 package com.example.appchat.config;
 
+import akka.actor.ActorRef;
 import com.example.appchat.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +21,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final RedisUtil redisUtil;
+    private final ActorRef actorSupervisor;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
@@ -35,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new UserInterceptor(redisUtil));
+        registration.interceptors(new UserInterceptor(redisUtil, actorSupervisor));
     }
 
     @Bean

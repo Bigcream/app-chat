@@ -1,0 +1,143 @@
+
+
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          login-app:
+#            provider: keycloak
+#            scope: openid
+#            authorization-grant-type: authorization_code
+#            client-id: login-app
+#            client-secret: fDkZ4yAHfH2cOTVQQFzYMbnnDytOqoQV
+#            redirect-uri: http://localhost:8081/login/oauth2/code/keycloak1
+#        provider:
+#          keycloak:
+#            issuer-uri: http://localhost:8090/realms/AuthServer
+#            #            token-uri: http://localhost:8090/realms/AuthServer/protocol/openid-connect/token
+#            #            authorization-uri: http://localhost:8090/realms/AuthServer/protocol/openid-connect/auth
+##            user-info-uri: http://localhost:8090/realms/AuthServer/protocol/openid-connect/userinfo
+#            user-name-attribute: preferred_username
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8090/realms/AuthServer
+#keycloak:
+#  auth-server-url: http://localhost:8090
+#  credentials:
+#    secret: fDkZ4yAHfH2cOTVQQFzYMbnnDytOqoQV
+#  realm: AuthServer
+#  use-resource-role-mappings: 'true'
+#  ssl-required: external
+#  resource: login-app
+#config redis
+redis:
+  host: localhost
+  port: '6379'
+spring:
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.StringOrBytesSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: microservice
+    bootstrap-servers: localhost:9093
+  jpa:
+    generate-ddl: 'false'
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: 'true'
+  jdbc:
+    template:
+      query-timeout: '3'
+  data:
+    mongodb:
+      authentication-database: admin
+      username: admin
+      port: '27017'
+      host: localhost
+      database: microservices
+      password: admin
+  application:
+    name: microservice
+  datasource:
+    password: ecommerce
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    hikari:
+      maximum-pool-size: '30'
+      minimum-idle: '10'
+    username: ecommerce
+  sleuth:
+    propagation:
+      type: w3c,b3
+    opentracing:
+      enabled: 'true'
+  zipkin:
+    base-url: http://localhost:9411
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info
+  metrics:
+    export:
+      prometheus:
+        enabled: 'true'
+resilience4j:
+  retry:
+    instances:
+      microservice:
+        waitDuration: 1s
+        exponentialBackoffMultiplier: '2'
+        enableExponentialBackoff: 'true'
+        ignore-exceptions: com.eventsourcing.es.exceptions.AggregateNotFoundException
+        max-attempts: '3'
+  thread-pool-bulkhead:
+    instances:
+      microservice:
+        maxThreadPoolSize: '1'
+        queueCapacity: '1'
+        coreThreadPoolSize: '1'
+  circuitbreaker:
+    instances:
+      microservice:
+        minimumNumberOfCalls: '10'
+        failureRateThreshold: '30'
+        eventConsumerBufferSize: '10'
+        slidingWindowType: TIME_BASED
+        registerHealthIndicator: 'true'
+        permittedNumberOfCallsInHalfOpenState: '3'
+        waitDurationInOpenState: 20s
+        slidingWindowSize: '5'
+  timelimiter:
+    instances:
+      microservice:
+        timeoutDuration: 3s
+        cancelRunningFuture: 'true'
+microservice:
+  kafka:
+    default-concurrency: '10'
+    groupId: es_microservice
+    topics:
+      bank-account-event-store: bank-account-event-store
+server:
+  tomcat:
+    accesslog:
+      enabled: 'true'
+  port: '8082'
+#springdoc:
+#  swagger-ui:
+#    path: /swagger-ui.html
+logging:
+  level:
+    org:
+      apache:
+        kafka: warn
+  pattern:
+    console: '%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint}
+      %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan}
+      %clr(line:%L) %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}'
+

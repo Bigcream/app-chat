@@ -1,7 +1,7 @@
-package com.example.appchat.constant;
+package com.example.appchat.config;
 
-public class ActorName {
-    public static final String USER_ACTOR = "userActor";
+public class ActorNameConfig {
+    public static final String USER_ACTOR_BEAN_NAME = "userActor";
     public static final String URL_AKKA_ACTOR = "akka://akka-spring/user/";
     public static final String ACTOR_SYSTEM = "akka-spring";
     public static final String ACTOR_COMMON_BEAN_NAME = "commonActor";

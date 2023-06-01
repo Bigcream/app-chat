@@ -22,7 +22,6 @@ class RedisConfig {
     @Value("${redis.port}")
     private int redisPort;
 
-
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         // Tạo Standalone Connection tới Redis

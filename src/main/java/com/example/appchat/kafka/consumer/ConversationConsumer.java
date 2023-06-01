@@ -2,7 +2,7 @@ package com.example.appchat.kafka.consumer;
 
 import com.example.appchat.constant.KafkaGroup;
 import com.example.appchat.constant.KafkaTopic;
-import com.kafkaservice.payload.MessageKafka;
+import com.example.appchat.model.dto.MessageKafka;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;

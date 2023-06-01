@@ -5,15 +5,17 @@ import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.model.dto.ChatMessage;
+import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.entity.UserEntity;
 import com.example.appchat.repository.UserRepo;
-import com.kafkaservice.payload.MessageKafka;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import static com.example.appchat.constant.Destination.PUBLIC_CHANNEL;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -26,10 +28,9 @@ public class UserActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create()
-                .match(ChatMessage.class, msg -> {
-                    sender = sender();
-                    MessageKafka response = chat(msg);
-                    sender.tell(response, self());
+                .match(UserCommand.SendToPublicChat.class, msg -> {
+                    sendToPublicChat(msg.message);
+                    log.info("Sent message to public chat:  " + msg.message.getConversationId());
                 })
                 .match(ConversationCommand.SendToPrivateChat.class, msg ->{
                     sender = sender();
@@ -50,6 +51,9 @@ public class UserActor extends AbstractActor {
     private void sendToPrivateChat(MessageKafka msg) {
         simpMessagingTemplate.convertAndSendToUser(msg.getReceiver(),"/private",msg);
         System.out.println("sender private " + sender.path());
+    }
+    private void sendToPublicChat(MessageKafka msg) {
+        simpMessagingTemplate.convertAndSend(PUBLIC_CHANNEL, msg);
     }
     private UserEntity saveUser(UserEntity user){
         return userRepo.save(user);

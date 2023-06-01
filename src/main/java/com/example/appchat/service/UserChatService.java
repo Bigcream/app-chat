@@ -3,11 +3,11 @@ package com.example.appchat.service;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.example.appchat.actor.supervisor.SupervisorCommand;
-import com.example.appchat.constant.ActorName;
+import com.example.appchat.config.ActorNameConfig;
 import com.example.appchat.model.dto.ChatMessage;
+import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.repository.UserRepo;
 import com.example.appchat.util.ActorUtil;
-import com.kafkaservice.payload.MessageKafka;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +22,13 @@ public class UserChatService {
     private final ActorRef actorSupervisor;
     private final HashMap<String, AtomicLong> mapId;
     public void joinRoom(MessageKafka message) throws Exception {
-        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
+        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorNameConfig.USER_ACTOR_BEAN_NAME);
         userActor.tell(new ChatMessage(message), userActor);
         System.out.println("join " + userActor.path());
     }
     public void sendPublicChat(MessageKafka message) {
 //        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
-        actorSupervisor.tell(new SupervisorCommand.ForwardPublicMessage(message), actorSupervisor);
+        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
     }
     public void createConversationActor(MessageKafka message) throws Exception{
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);

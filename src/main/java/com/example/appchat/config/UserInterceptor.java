@@ -1,7 +1,10 @@
 package com.example.appchat.config;
 
 
+import akka.actor.ActorRef;
+import com.example.appchat.actor.supervisor.SupervisorCommand;
 import com.example.appchat.constant.RedisKeyPattern;
+import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.dto.UserDTO;
 import com.example.appchat.model.entity.User;
 import com.example.appchat.util.RedisUtil;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class UserInterceptor implements ChannelInterceptor {
 
     private final RedisUtil redisUtil;
+    private final ActorRef actorSupervisor;
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -34,9 +38,11 @@ public class UserInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             Object raw = message.getHeaders().get(SimpMessageHeaderAccessor.NATIVE_HEADERS);
             if (raw instanceof Map) {
-                Object name = ((Map<?, ?>) raw).get("username");
-                accessor.setUser(new User(name.toString()));
-                userDTO.setUsername(name.toString());
+                List<String> name = (List<String>) ((Map<?, ?>) raw).get("username");
+                accessor.setUser(new User(name.get(0)));
+                userDTO.setUsername(name.get(0));
+                actorSupervisor.tell(new SupervisorCommand.UserConnect(MessageKafka.builder()
+                        .sender(userDTO.getUsername()).build()), actorSupervisor);
             }
             userDTO.setSessionId(simpSessionId.toString());
             redisUtil.save(userKey, userDTO);
@@ -58,6 +64,8 @@ public class UserInterceptor implements ChannelInterceptor {
 
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             redisUtil.delete(userKey);
+            actorSupervisor.tell(new SupervisorCommand.UserDisconnect(MessageKafka.builder()
+                    .sender(userDTO.getUsername()).build()), actorSupervisor);
         }
         return message;
     }

@@ -4,5 +4,6 @@ public enum Status {
     JOIN,
     MESSAGE,
     LEAVE,
-    CREATE_ROOM
+    CREATE_ROOM,
+    MESSAGE_PRIVATE
 }
