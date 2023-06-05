@@ -4,7 +4,6 @@ package com.example.appchat.config;
 import akka.actor.ActorRef;
 import com.example.appchat.actor.supervisor.SupervisorCommand;
 import com.example.appchat.constant.RedisKeyPattern;
-import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.model.dto.UserDTO;
 import com.example.appchat.model.entity.User;
 import com.example.appchat.util.RedisUtil;
@@ -41,12 +40,10 @@ public class UserInterceptor implements ChannelInterceptor {
                 List<String> name = (List<String>) ((Map<?, ?>) raw).get("username");
                 accessor.setUser(new User(name.get(0)));
                 userDTO.setUsername(name.get(0));
-                actorSupervisor.tell(new SupervisorCommand.UserConnect(MessageKafka.builder()
-                        .sender(userDTO.getUsername()).build()), actorSupervisor);
+                actorSupervisor.tell(new SupervisorCommand.UserConnect(userDTO), actorSupervisor);
             }
             userDTO.setSessionId(simpSessionId.toString());
             redisUtil.save(userKey, userDTO);
-            System.out.println("redis key test: " + RedisKeyPattern.USER_ONlINE + userDTO.getSessionId());
         }
 
         if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
@@ -63,9 +60,11 @@ public class UserInterceptor implements ChannelInterceptor {
         }
 
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            User user = (User) message.getHeaders().get(SimpMessageHeaderAccessor.USER_HEADER);
+            assert user != null;
+            userDTO.setUsername(user.getName());
+            actorSupervisor.tell(new SupervisorCommand.UserDisconnect(userDTO), actorSupervisor);
             redisUtil.delete(userKey);
-            actorSupervisor.tell(new SupervisorCommand.UserDisconnect(MessageKafka.builder()
-                    .sender(userDTO.getUsername()).build()), actorSupervisor);
         }
         return message;
     }
