@@ -39,7 +39,7 @@ public class UserChatService {
     public void sendPrivateChat(MessageKafka message) {
 //        ActorRef userActor = ActorUtil.getInstanceOfActor(message.getSender(), actorSystem, ActorName.USER_ACTOR);
 //        userActor.tell(new ConversationCommand.SendToPrivateChat(message), userActor);
-        actorSupervisor.tell(new SupervisorCommand.ForwardPrivateMessage(message), actorSupervisor);
+        actorSupervisor.tell(new SupervisorCommand.ForwardMessage(message), actorSupervisor);
     }
 //    public UserEntity register(UserEntity user) throws Exception {
 //        UserEntity user1 = new UserEntity();

@@ -37,7 +37,6 @@ public class ChatPublicConsumer {
     }
     public void sendMessagePublic(ConsumerRecord<String, String> record, MessageKafka messageKafka) {
         userChatService.sendPublicChat(messageKafka);
-        System.out.println("test" + messageKafka.getContent());
     }
 }
 

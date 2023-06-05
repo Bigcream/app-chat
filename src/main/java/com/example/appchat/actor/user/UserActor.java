@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import static com.example.appchat.constant.Destination.PRIVATE_CHANNEL;
 import static com.example.appchat.constant.Destination.PUBLIC_CHANNEL;
 
 @Component
@@ -28,11 +29,11 @@ public class UserActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create()
-                .match(UserCommand.SendToPublicChat.class, msg -> {
+                .match(UserCommand.publicChat.class, msg -> {
                     sendToPublicChat(msg.message);
                     log.info("Sent message to public chat:  " + msg.message.getConversationId());
                 })
-                .match(ConversationCommand.SendToPrivateChat.class, msg ->{
+                .match(UserCommand.privateChat.class, msg ->{
                     sender = sender();
                     sendToPrivateChat(msg.message);
                 })
@@ -49,8 +50,7 @@ public class UserActor extends AbstractActor {
     }
 
     private void sendToPrivateChat(MessageKafka msg) {
-        simpMessagingTemplate.convertAndSendToUser(msg.getReceiver(),"/private",msg);
-        System.out.println("sender private " + sender.path());
+        simpMessagingTemplate.convertAndSendToUser(msg.getReceiver(), PRIVATE_CHANNEL, msg);
     }
     private void sendToPublicChat(MessageKafka msg) {
         simpMessagingTemplate.convertAndSend(PUBLIC_CHANNEL, msg);

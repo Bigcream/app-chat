@@ -4,47 +4,17 @@ package com.example.appchat.actor.user;
 import com.example.appchat.model.dto.MessageKafka;
 
 public class UserCommand {
-    public static final class Create {
+    public static final class privateChat {
         public final MessageKafka message;
-        public Create(MessageKafka message) {
+        public privateChat(MessageKafka message) {
             this.message = message;
         }
     }
-    public static final class SendToPrivateChat {
+    public static final class publicChat {
         public final MessageKafka message;
-        public SendToPrivateChat(MessageKafka message) {
-            this.message = message;
-        }
-    }
-    public static final class SendToPublicChat {
-        public final MessageKafka message;
-        public SendToPublicChat(MessageKafka message) {
+        public publicChat(MessageKafka message) {
             this.message = message;
         }
     }
     public static final class GetAllRoomAvailable  {}
-    public static final class GetAllUserOnline { }
-    public static final class MessagePosted {
-        public final String screenName;
-        public final String message;
-
-        public MessagePosted(String screenName, String message) {
-            this.screenName = screenName;
-            this.message = message;
-        }
-    }
-    public static final class PostMessage{
-        public final String message;
-
-        public PostMessage(String message) {
-            this.message = message;
-        }
-    }
-
-    static final class NotifyClient{
-        final MessagePosted message;
-        public NotifyClient(MessagePosted message) {
-            this.message = message;
-        }
-    }
 }
