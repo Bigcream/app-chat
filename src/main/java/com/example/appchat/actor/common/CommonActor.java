@@ -30,18 +30,18 @@ public class CommonActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return ReceiveBuilder.create()
-                .match(ConversationCommand.GetAllRoomAvailable.class, msg -> {
-                    sender = sender();
-                    List<ChatRoomDTO> chatRoomDTOs = getAllRoomAvailable();
-                    sender.tell(chatRoomDTOs, self());
-                    System.out.println("sent room");
-                })
-                .match(ConversationCommand.GetAllUserOnline.class, msg ->{
-                    sender = sender();
-                    List<String> users = getAllUserOnline();
-                    sender.tell(users, self());
-                    System.out.println("sent user");
-                })
+//                .match(ConversationCommand.GetAllRoomAvailable.class, msg -> {
+//                    sender = sender();
+//                    List<ChatRoomDTO> chatRoomDTOs = getAllRoomAvailable();
+//                    sender.tell(chatRoomDTOs, self());
+//                    System.out.println("sent room");
+//                })
+//                .match(ConversationCommand.GetAllUserOnline.class, msg ->{
+//                    sender = sender();
+//                    List<String> users = getAllUserOnline();
+//                    sender.tell(users, self());
+//                    System.out.println("sent user");
+//                })
                 .build();
     }
     public List<ChatRoomDTO> getAllRoomAvailable(){

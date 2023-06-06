@@ -8,6 +8,8 @@ import com.example.appchat.util.SerializerUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.cloud.sleuth.annotation.NewSpan;
+import org.springframework.cloud.sleuth.annotation.SpanTag;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.adapter.ConsumerRecordMetadata;
 import org.springframework.kafka.support.Acknowledgment;
@@ -21,9 +23,9 @@ import java.time.Duration;
 @Slf4j
 public class ChatPublicConsumer {
     private final UserChatService userChatService;
-
+    @NewSpan
     @KafkaListener(topics = KafkaTopic.PUBLIC_CHAT_TOPIC, groupId = KafkaGroup.PUBLIC_CHAT_GROUP)
-    public void bankAccountMongoProjectionListener(@Payload byte[] data, ConsumerRecord<String, String> record, ConsumerRecordMetadata meta, Acknowledgment ack) {
+    public void publicChatListener(@Payload byte[] data, ConsumerRecord<String, String> record, ConsumerRecordMetadata meta, Acknowledgment ack) {
         log.info("(publicTopicChat) topic: {}, offset: {}, partition: {}, timestamp: {}, data: {}", meta.topic(), meta.offset(), meta.partition(), meta.timestamp(), new String(data));
         try {
             MessageKafka messageKafka = SerializerUtils.deserializeFromJsonBytes(data, MessageKafka.class);
@@ -35,7 +37,8 @@ public class ChatPublicConsumer {
             log.error("(publicTopicChat) topic: {}, offset: {}, partition: {}, timestamp: {}", meta.topic(), meta.offset(), meta.partition(), meta.timestamp(), ex);
         }
     }
-    public void sendMessagePublic(ConsumerRecord<String, String> record, MessageKafka messageKafka) {
+
+    public void sendMessagePublic(@SpanTag("event") ConsumerRecord<String, String> record, MessageKafka messageKafka) {
         userChatService.sendPublicChat(messageKafka);
     }
 }

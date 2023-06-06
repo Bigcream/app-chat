@@ -5,10 +5,10 @@ import akka.japi.Function;
 import akka.japi.pf.ReceiveBuilder;
 import com.example.appchat.actor.conversation.ConversationCommand;
 import com.example.appchat.model.dto.MessageKafka;
-import com.example.appchat.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -26,7 +26,6 @@ import static com.example.appchat.config.ActorNameConfig.USER_ACTOR_BEAN_NAME;
 public class SupervisorActor extends AbstractActor {
     private ActorRef sender;
     private final ActorSystem actorSystem;
-    private final RedisUtil redisUtil;
     private static final SupervisorStrategy strategy =
             new OneForOneStrategy(10, Duration.create("1 minute"),
                     new Function<Throwable, SupervisorStrategy.Directive>() {
@@ -52,6 +51,7 @@ public class SupervisorActor extends AbstractActor {
         return strategy;
     }
     @Override
+    @NewSpan
     public Receive createReceive() {
         return ReceiveBuilder.create()
                 .match(SupervisorCommand.CreateConversationActor.class, create -> {
@@ -66,10 +66,6 @@ public class SupervisorActor extends AbstractActor {
                         log.error("Error test when conversation actor:" + conversationActor.path() + " send message " + ", because: " + e.getMessage());
                     }
                 })
-//                .match(SupervisorCommand.ForwardMessage.class, forward -> {
-//                    ActorRef conversationActor = getConversationActor(forward.message);
-//                    forwardMessage(forward.message, conversationActor, getContext(), getUserActor(forward.message));
-//                })
                 .match(SupervisorCommand.UserConnect.class, msg -> {
                     createUserActor(msg.userDTO.getUsername());
                 })
@@ -83,7 +79,6 @@ public class SupervisorActor extends AbstractActor {
                 })
                 .build();
     }
-
     public void forwardMessage(MessageKafka message, ActorRef conversationActor, ActorContext actorContext, ActorRef userActor){
         switch (message.getStatus()){
             case MESSAGE:

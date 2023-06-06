@@ -62,7 +62,7 @@ spring:
       database: microservices
       password: admin
   application:
-    name: microservice
+    name: app-chat
   datasource:
     password: ecommerce
     url: jdbc:postgresql://localhost:5432/ecommerce
@@ -74,6 +74,8 @@ spring:
     propagation:
       type: w3c,b3
     opentracing:
+      enabled: 'true'
+    async:
       enabled: 'true'
   zipkin:
     base-url: http://localhost:9411

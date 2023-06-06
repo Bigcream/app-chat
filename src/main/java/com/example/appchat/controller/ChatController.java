@@ -1,6 +1,5 @@
 package com.example.appchat.controller;
 
-import akka.actor.ActorRef;
 import com.example.appchat.constant.RedisKeyPattern;
 import com.example.appchat.model.dto.MessageKafka;
 import com.example.appchat.service.ChatRoomService;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/appchat")
 public class ChatController extends BaseController {
-    private final ActorRef actorCommon;
     private final ChatRoomService chatRoomService;
     private final UserChatService userChatService;
     private final RedisUtil redisUtil;
