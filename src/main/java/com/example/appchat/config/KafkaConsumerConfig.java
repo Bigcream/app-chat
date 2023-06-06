@@ -23,7 +23,7 @@ import java.util.Map;
 //@EnableKafka
 public class KafkaConsumerConfig {
 
-    @Value(value = "${kafka.bootstrapServers:localhost:9093}")
+    @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     private final KafkaConfigProperties kafkaConfigProperties;
